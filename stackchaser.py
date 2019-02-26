@@ -39,7 +39,7 @@ def CreateGraphviz(StackList,filename):
 
         for Stack in StackList:
             if type(Stack) is str:
-                G.node(Stack)
+                G.edge(Stack,ParentStackName)
             elif type(Stack) is dict:
                 key = list(Stack.keys())[0]
                 CreateNode(Stack[key],key)

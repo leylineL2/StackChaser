@@ -17,7 +17,7 @@ parser.add_argument("-p","--prefix", help="add prefix string for output file",re
 parser.add_argument("-o","--output-file", help="output filename",required=False)
 
 def ChasingStack(input_filename,output_filename):
-    G = Digraph(format='png',engine='fdp')
+    G = Digraph(format='png',engine='sfdp')
     def RemindStack(filename,ParentStackName,depth=0):
         target_file = open(filename)
         array = yaml.load(target_file)
@@ -27,11 +27,13 @@ def ChasingStack(input_filename,output_filename):
         for i in range(len(stacks)):
             print(G)
             if "AWS::CloudFormation::Stack" == array["Resources"][stacks[i]]["Type"]:
+                G.attr('node',shape="box",style="filled",color="green",fillcolor = "green",fontcolor="black")
+                # G.node(str(stacks[i]))
                 G.edge(ParentStackName,str(stacks[i]))
                 RemindStack(os.path.dirname(filename)+str("/")+array["Resources"][stacks[i]]["Properties"]["TemplateURL"],str(stacks[i]),depth+1)
             else:
                 if depth < 2:
-                    print(stacks[i])
+                    G.attr('node',color="black",fillcolor = "blue",fontcolor="white")
                     G.edge(ParentStackName,str(stacks[i]))
     RemindStack(input_filename,"Parent")
     G.render(output_filename)

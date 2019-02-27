@@ -415,6 +415,17 @@ class SafeConstructor(BaseConstructor):
 
     def construct_aws_sub(self,node):
         # print(self.construct_yaml_seq(node))
+        if isinstance(node, ScalarNode):
+            self.construct_scalar(node)
+        elif isinstance(node, SequenceNode):
+            self.construct_sequence(node)
+                # if not isinstance(subnode, MappingNode):
+        else:
+            raise ConstructorError(None, None,
+                    "could not sub determine a constructor for the tag %r" % node.tag,
+                    node.start_mark)
+
+    def construct_aws_select(self,node):
         pass
 
 SafeConstructor.add_constructor(
@@ -479,6 +490,10 @@ SafeConstructor.add_constructor(
 SafeConstructor.add_constructor(
         '!GetAtt',
         SafeConstructor.construct_yaml_str)
+
+SafeConstructor.add_constructor(
+        '!Sub',
+        SafeConstructor.construct_aws_select)
 
 class Constructor(SafeConstructor):
 

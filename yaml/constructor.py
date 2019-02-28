@@ -413,20 +413,33 @@ class SafeConstructor(BaseConstructor):
                 "could not determine a constructor for the tag %r" % node.tag,
                 node.start_mark)
 
+    def construct_aws_ref(self,node):
+        # node.value = "!Ref "+node.value
+        # print(node)
+        return self.construct_yaml_str(node)
+
+
     def construct_aws_sub(self,node):
         # print(self.construct_yaml_seq(node))
+        # print(node)
         if isinstance(node, ScalarNode):
+            # node.value = "!Sub "+node.value
             self.construct_scalar(node)
+            # print(self.construct_scalar(node))
         elif isinstance(node, SequenceNode):
-            self.construct_sequence(node)
-                # if not isinstance(subnode, MappingNode):
+            # print(node.value)
+            return [self.construct_object(child, deep=True)
+                for child in node.value]
         else:
             raise ConstructorError(None, None,
-                    "could not sub determine a constructor for the tag %r" % node.tag,
+                    "expected a sequence node, but found %s" % node.id,
                     node.start_mark)
 
     def construct_aws_select(self,node):
-        pass
+        # print(node)
+        return [self.construct_object(child, deep=True)
+                for child in node.value]
+
 
 SafeConstructor.add_constructor(
         'tag:yaml.org,2002:null',
@@ -481,7 +494,7 @@ SafeConstructor.add_constructor(None,
 
 SafeConstructor.add_constructor(
         '!Ref',
-        SafeConstructor.construct_yaml_str)
+        SafeConstructor.construct_aws_ref)
 
 SafeConstructor.add_constructor(
         '!Sub',
@@ -492,7 +505,7 @@ SafeConstructor.add_constructor(
         SafeConstructor.construct_yaml_str)
 
 SafeConstructor.add_constructor(
-        '!Sub',
+        '!Select',
         SafeConstructor.construct_aws_select)
 
 class Constructor(SafeConstructor):

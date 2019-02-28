@@ -5,6 +5,7 @@ import argparse
 import os
 from pprint import pprint
 from graphviz import Digraph
+import re
 
 parser = argparse.ArgumentParser(
         prog="stackchaser.py",
@@ -33,12 +34,31 @@ def ChasingStack(input_filename,output_filename):
                 nested_cfn_filepath = os.path.dirname(filename)+str("/")+array["Resources"][stacks[i]]["Properties"]["TemplateURL"]
                 RemindStack(nested_cfn_filepath,str(stacks[i]),depth+1)
             else:
+                # print(array["Resources"][stacks[i]])
+                G.attr('node',style="filled",color="#4286f4",fillcolor = "#4286f4",fontcolor="white")
+
                 if depth < 2:
-                    G.attr('node',style="filled",color="#4286f4",fillcolor = "#4286f4",fontcolor="white")
+                    if "Properties" in array["Resources"][stacks[i]]:
+                    # print(array["Resources"][stacks[i]]["Properties"].items())
+                        for k,v in array["Resources"][stacks[i]]["Properties"].items():
+
+                            if type(v) is not list:
+                                if "Outputs" in str(v):
+                                    print("key:"+str(k)+"value:"+str(v))
+                                    GetAttRef = v
+                                    print(GetAttRef)
+                                    G.edge(str(GetAttRef.split(".")[0]),str(stacks[i]),label = GetAttRef.split(".")[2])
+                                    print(GetAttRef.split(".")[0]+"->"+str(stacks[i])+":"+str(GetAttRef.split(".")[2]))
+                                if "!Ref" in str(v):
+                                    if type(v) is str:
+                                        print(v.split("!Ref "))
+                                        if v.split("!Ref ")[1] in array["Resources"]:
+                                            G.edge(str(stacks[i]),str(v.split("!Ref ")[1]),label = "Ref")
+                                            print("RefRef"+str(stacks[i])+"->"+str(v),)
                     G.edge(ParentStackName,str(stacks[i]))
 
     RemindStack(input_filename,"Parent")
-    # G.render(output_filename)
+    G.render(output_filename)
 
 
 if __name__ == '__main__':

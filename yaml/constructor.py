@@ -414,7 +414,7 @@ class SafeConstructor(BaseConstructor):
                 node.start_mark)
 
     def construct_aws_ref(self,node):
-        # node.value = "!Ref "+node.value
+        node.value = "!Ref "+node.value
         # print(node)
         return self.construct_yaml_str(node)
 
@@ -423,8 +423,9 @@ class SafeConstructor(BaseConstructor):
         # print(self.construct_yaml_seq(node))
         # print(node)
         if isinstance(node, ScalarNode):
-            # node.value = "!Sub "+node.value
-            self.construct_scalar(node)
+            node.value = "!Sub "+node.value
+            # print(node)
+            self.construct_yaml_str(node)
             # print(self.construct_scalar(node))
         elif isinstance(node, SequenceNode):
             # print(node.value)

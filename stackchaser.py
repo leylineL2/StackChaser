@@ -22,21 +22,23 @@ def ChasingStack(input_filename,output_filename):
         target_file = open(filename)
         array = yaml.load(target_file)
         stacks = []
+        G.attr('node',shape="box",style="filled",color="#f75d89",fillcolor = "#f75d89",fontcolor="black")
+        G.node(ParentStackName)
         for stack in array["Resources"]:
             stacks.append(str(stack))
         for i in range(len(stacks)):
-            print(G)
             if "AWS::CloudFormation::Stack" == array["Resources"][stacks[i]]["Type"]:
-                G.attr('node',shape="box",style="filled",color="green",fillcolor = "green",fontcolor="black")
-                # G.node(str(stacks[i]))
+                G.attr('node',shape="box",style="filled",color="#8be268",fillcolor = "#8be268",fontcolor="black")
                 G.edge(ParentStackName,str(stacks[i]))
-                RemindStack(os.path.dirname(filename)+str("/")+array["Resources"][stacks[i]]["Properties"]["TemplateURL"],str(stacks[i]),depth+1)
+                nested_cfn_filepath = os.path.dirname(filename)+str("/")+array["Resources"][stacks[i]]["Properties"]["TemplateURL"]
+                RemindStack(nested_cfn_filepath,str(stacks[i]),depth+1)
             else:
                 if depth < 2:
-                    G.attr('node',color="black",fillcolor = "blue",fontcolor="white")
+                    G.attr('node',style="filled",color="#4286f4",fillcolor = "#4286f4",fontcolor="white")
                     G.edge(ParentStackName,str(stacks[i]))
+
     RemindStack(input_filename,"Parent")
-    G.render(output_filename)
+    # G.render(output_filename)
 
 
 if __name__ == '__main__':

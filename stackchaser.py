@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import yaml
+import pymation
 import argparse
 import os
 from pprint import pprint
@@ -21,7 +21,7 @@ def ChasingStack(input_filename,output_filename):
     G = Digraph(format='png',engine='sfdp')
     def RemindStack(filename,ParentStackName,depth=0):
         target_file = open(filename)
-        array = yaml.load(target_file)
+        array = pymation.load(target_file)
         stacks = []
         G.attr('node',shape="box",style="filled",color="#f75d89",fillcolor = "#f75d89",fontcolor="black")
         G.node(ParentStackName)

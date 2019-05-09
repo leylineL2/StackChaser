@@ -29,13 +29,13 @@ def ChasingStack(input_filename,output_filename):
             stacks.append(str(stack))
         for i in range(len(stacks)):
             if "AWS::CloudFormation::Stack" == array["Resources"][stacks[i]]["Type"]:
-                G.attr('node',shape="box",style="filled",color="#8be268",fillcolor = "#8be268",fontcolor="black")
+                G.attr('node',shape="box",style="filled",color="#8be26840",fillcolor = "#8be26840",fontcolor="black")
                 G.edge(ParentStackName,str(stacks[i]))
                 nested_cfn_filepath = os.path.dirname(filename)+str("/")+array["Resources"][stacks[i]]["Properties"]["TemplateURL"]
                 RemindStack(nested_cfn_filepath,str(stacks[i]),depth+1)
             else:
                 # print(array["Resources"][stacks[i]])
-                G.attr('node',style="filled",color="#4286f4",fillcolor = "#4286f4",fontcolor="white")
+                G.attr('node',style="filled",color="#4286f440",fillcolor = "#4286f440",fontcolor="black")
 
                 if depth < 2:
                     if "Properties" in array["Resources"][stacks[i]]:

@@ -28,10 +28,15 @@ def construct_aws_select(self,node):
     return [self.construct_object(child, deep=True)
         for child in node.value]
 
+def construct_aws_join(self,node):
+            # print(node)
+    return [self.construct_object(child, deep=True)
+        for child in node.value]
+
 constructor.Constructor.construct_aws_ref = construct_aws_ref
 constructor.Constructor.construct_aws_sub = construct_aws_sub
 constructor.Constructor.construct_aws_select = construct_aws_select
-
+constructor.Constructor.construct_aws_join = construct_aws_join
 
 constructor.Constructor.add_constructor(
         '!Ref',
@@ -48,3 +53,7 @@ constructor.Constructor.add_constructor(
 constructor.Constructor.add_constructor(
         '!Select',
         constructor.Constructor.construct_aws_select)
+
+constructor.Constructor.add_constructor(
+        '!Join',
+        constructor.Constructor.construct_aws_join)
